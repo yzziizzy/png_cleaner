@@ -12,21 +12,25 @@
 
 
 int main(int argc, char* argv[]) {
-
-
-
+	
+	
+	
 	FILE* fi, *fo;
 	png_byte sig[8];
-
 	
-	fi = fopen(argv[1], "rb");
+	
+	char* infile = argv[1];
+	char* outfile = argv[2];
+	
+	
+	fi = fopen(infile, "rb");
 	if(!fi) {
-		fprintf(stderr, "Could not open \"%s\".\n", argv[1]);
+		fprintf(stderr, "Could not open \"%s\".\n", infile);
 		return 1;
 	}
 	
 		// file stuff
-	fo = fopen(argv[2], "wb");
+	fo = fopen(outfile, "wb");
 	if(!fo) {
 		fprintf(stderr, "Could not open \"%s\".\n", argv[2]);
 		return 1;
@@ -39,13 +43,13 @@ int main(int argc, char* argv[]) {
 	fread(sig, 1, 8, fi);
 	
 	if(png_sig_cmp(sig, 0, 8)) {
-		fprintf(stderr, "\"%s\" is not a valid PNG file.\n", argv[1]);
+		fprintf(stderr, "\"%s\" is not a valid PNG file.\n", infile);
 		return 1;
 	}
 	
 	png_structp readStruct = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!readStruct) {
-		fprintf(stderr, "Failed to load \"%s\". Error 1.\n", argv[1]);
+		fprintf(stderr, "Failed to load \"%s\". Error 1.\n", infile);
 		return 1;
 	}
 	
@@ -56,7 +60,7 @@ int main(int argc, char* argv[]) {
 	
 	png_infop infoStruct = png_create_info_struct(readStruct);
 	if (!infoStruct) {
-		fprintf(stderr, "Failed to load \"%s\". Error 2.\n", argv[1]);
+		fprintf(stderr, "Failed to load \"%s\". Error 2.\n", infile);
 		return 1;
 	};
 	
@@ -65,7 +69,7 @@ int main(int argc, char* argv[]) {
 	
 	// exceptions are evil. the alternative with libPNG is a bit worse. ever heard of return codes libPNG devs?
 	if (setjmp(png_jmpbuf(readStruct)) || setjmp(png_jmpbuf(writeStruct))) {
-		fprintf(stderr, "Failed to load \"%s\". Error 3.\n", argv[1]);
+		fprintf(stderr, "Failed to load \"%s\". Error 3.\n", infile);
 		return 1;
 	}
 	
