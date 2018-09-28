@@ -22,6 +22,19 @@ int main(int argc, char* argv[]) {
 	char* infile = argv[1];
 	char* outfile = argv[2];
 	
+	if(argc < 2) {
+		printf("Usage: %s INPUT [OUTPUT]\n", argv[0]);
+		exit(1);
+	}
+	
+	// no output file provided
+	if(argc < 3) {
+		int inlen = strlen(infile);
+		outfile = calloc(1, inlen + 1 + 50); // good enough
+		strncpy(outfile, infile, inlen - 4);
+		strcat(outfile, "_cleaned.png");
+	}
+	
 	
 	fi = fopen(infile, "rb");
 	if(!fi) {
@@ -118,7 +131,7 @@ int main(int argc, char* argv[]) {
 	fclose(fi);
 	fclose(fo);
 	
-	printf("Finished \"%s\".\n", argv[2]);
+	printf("Finished \"%s\".\n", outfile);
 	
 	return 0;
 }
